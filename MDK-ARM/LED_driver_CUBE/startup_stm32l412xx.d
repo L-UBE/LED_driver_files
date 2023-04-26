@@ -1,0 +1,1 @@
+led_driver_cube\startup_stm32l412xx.o: startup_stm32l412xx.s
