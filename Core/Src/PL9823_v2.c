@@ -10,7 +10,7 @@
 #include <stdio.h>
 
 #define NUMLED 64
-#define RESET_CYCLE 50
+#define RESET_CYCLE 27
 #define HIGHTIME 100
 #define LOWTIME 27
 
@@ -18,17 +18,49 @@
 #define CHANNEL_1_TIM_CHANNEL TIM_CHANNEL_1
 #define CHANNEL_2_TIM htim1
 #define CHANNEL_2_TIM_CHANNEL TIM_CHANNEL_4
-#define CHANNEL_3_TIM htim2
-#define CHANNEL_3_TIM_CHANNEL TIM_CHANNEL_1
-#define CHANNEL_4_TIM htim2
+#define CHANNEL_3_TIM htim1
+#define CHANNEL_3_TIM_CHANNEL TIM_CHANNEL_2
+#define CHANNEL_4_TIM htim1
 #define CHANNEL_4_TIM_CHANNEL TIM_CHANNEL_3
 
 // PRESET COLORS, 16
-uint32_t COLORS[16] = {0x000000, 0xff0000, 0x00ff00, 0x0000ff, 
-					  0xffff00, 0xff00ff, 0x00ffff, 0xffffff,
-					  0x000000, 0xff0000, 0x00ff00, 0x0000ff, 
-					  0xffff00, 0xff00ff, 0x00ffff, 0xffffff
-					 };
+/*
+uint32_t COLORS[16] = {
+			0xFF0000, // red
+			0xFF7F00, // orange
+			0xFFFF00, // yellow
+			0x00FF00, // green
+			0x00FFFF, // cyan
+			0x0000FF, // blue
+			0x4B0082, // indigo
+			0x9400D3, // violet
+			0xFF1493, // deep pink
+			0xFF69B4, // hot pink
+			0xFFC0CB, // pink
+			0xE6E6FA, // lavender
+			0xD8BFD8, // thistle
+			0xBA55D3, // medium orchid
+			0x9932CC, // dark orchid
+			0x8A2BE2, // blue violet
+};
+*/
+uint32_t COLORS[16] = {
+	0xFF0000,
+	0xFF7F00,
+	0xFFFF00,
+	0x00FF00,
+	0x00FFFF,
+	0x0000FF,
+	0x4B0082,
+	0xE6E6FA,
+	0xFF0000,
+	0xFF7F00,
+	0xFFFF00,
+	0x00FF00,
+	0x00FFFF,
+	0x0000FF,
+	0x4B0082,
+	0xE6E6FA};
 
 // call PL9823Presetinit to set these
 uint16_t COLORS_FOR_DMA[16][24];
@@ -82,14 +114,14 @@ void PL9823_sendchannel(uint32_t *color, uint32_t color_length, int channel){
 // takes in a array for a specific channel
 void PL9823_sendchannelPreset(uint8_t *color, uint8_t color_length, uint8_t channel){ 
 	// RESET_CYCLE, set to 0
-	for (int j=0; j< color_length/2; j++){ //for each LED
+	for (int j=0; j< color_length/2 ; j++){ //for each LED
 		// color should have size color_length/2. each byte consists of two LED data 
 		
 		// first LED, 24*2, 2 is cuz uint16_t
 		memcpy(LEDbuffer+RESET_CYCLE+2*j*24, COLORS_FOR_DMA + ((color[j]) >> 4), 24*2 );
 		
 		// second LED
-		memcpy(LEDbuffer+RESET_CYCLE+(2*j+1)*24, COLORS_FOR_DMA[(color[j]) & 0xf], 24*2 );
+		memcpy(LEDbuffer+RESET_CYCLE+(2*j+1)*24, COLORS_FOR_DMA + ((color[j]) & 0xf), 24*2 );
 	}
 	// RESET_CYCLE, set to 0
 	switch(channel){

@@ -168,12 +168,27 @@
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>LEDbuffer[1600]</ItemText>
+          <ItemText>LEDbuffer[50]</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>COLORS_FOR_DMA</ItemText>
+          <ItemText>LEDbuffer[74]</ItemText>
+        </Ww>
+        <Ww>
+          <count>5</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>LEDdata[0]</ItemText>
+        </Ww>
+        <Ww>
+          <count>6</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>LEDdata[1]</ItemText>
+        </Ww>
+        <Ww>
+          <count>7</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>LEDbuffer</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

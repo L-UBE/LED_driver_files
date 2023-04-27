@@ -10,9 +10,12 @@
 #include <stdio.h>
 
 #define NUMLED 64
-#define RESET_CYCLE 50
+#define RESET_CYCLE 27
 #define HIGHTIME 100
 #define LOWTIME 27
+
+//#define HIGHTIME 1
+//#define LOWTIME 0
 
 #define CHANNEL_1_TIM htim1
 #define CHANNEL_1_TIM_CHANNEL TIM_CHANNEL_1
@@ -24,10 +27,23 @@
 #define CHANNEL_4_TIM_CHANNEL TIM_CHANNEL_3
 
 // PRESET COLORS, 16
-uint32_t COLORS[16] = {0x000000, 0xff0000, 0x00ff00, 0x0000ff, 
-					  0xffff00, 0xff00ff, 0x00ffff, 0xffffff,
-					  0x000000, 0xff0000, 0x00ff00, 0x0000ff, 
-					  0xffff00, 0xff00ff, 0x00ffff, 0xffffff
+uint32_t COLORS[16] = {
+        0xFF0000,
+				0xFF1A1A,
+				0xFF3333,
+				0xFF4D4D,
+				0xFF6666,
+				0xFF8080,
+				0xFF9999,
+				0xFFB3B3,
+				0xFFCCCC,
+				0xFFE5E5,
+				0x0000FF,
+				0x1A1AFF,
+				0x3333FF,
+				0x4D4DFF,
+				0x6666FF,
+				0x8080FF
 					 };
 
 // call PL9823Presetinit to set these
@@ -82,14 +98,14 @@ void PL9823_sendchannel(uint32_t *color, uint32_t color_length, int channel){
 // takes in a array for a specific channel
 void PL9823_sendchannelPreset(uint8_t *color, uint8_t color_length, uint8_t channel){ 
 	// RESET_CYCLE, set to 0
-	for (int j=0; j< color_length/2; j++){ //for each LED
+	for (int j=0; j< color_length/2 ; j++){ //for each LED
 		// color should have size color_length/2. each byte consists of two LED data 
 		
 		// first LED, 24*2, 2 is cuz uint16_t
 		memcpy(LEDbuffer+RESET_CYCLE+2*j*24, COLORS_FOR_DMA + ((color[j]) >> 4), 24*2 );
 		
 		// second LED
-		memcpy(LEDbuffer+RESET_CYCLE+(2*j+1)*24, COLORS_FOR_DMA[(color[j]) & 0xf], 24*2 );
+		memcpy(LEDbuffer+RESET_CYCLE+(2*j+1)*24, COLORS_FOR_DMA + ((color[j]) & 0xf), 24*2 );
 	}
 	// RESET_CYCLE, set to 0
 	switch(channel){
