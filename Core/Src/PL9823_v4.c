@@ -1,0 +1,135 @@
+/*
+PL9823_v3.h 16x16x16 only
+*/
+/* Includes ------------------------------------------------------------------*/
+#include "main.h"
+#include "dma.h"
+#include "tim.h"
+#include "usart.h"
+#include "gpio.h"
+
+#include "PL9823_v4.h"
+#include <string.h>
+#include <stdio.h>
+//16x16x16
+#define NUMLED 256
+#define BRIGHTNESS 0 //1 == full, 0 == half
+
+#define RESET_CYCLE 27
+#define HIGHTIME 100
+#define LOWTIME 27
+
+#define CHANNEL_1_TIM htim1
+#define CHANNEL_1_TIM_CHANNEL TIM_CHANNEL_1
+#define CHANNEL_2_TIM htim1
+#define CHANNEL_2_TIM_CHANNEL TIM_CHANNEL_2
+#define CHANNEL_3_TIM htim1
+#define CHANNEL_3_TIM_CHANNEL TIM_CHANNEL_3
+#define CHANNEL_4_TIM htim1
+#define CHANNEL_4_TIM_CHANNEL TIM_CHANNEL_4
+
+uint32_t COLORS[16] = {
+0x000000,
+0x8B00FF, //(Blue Violet)
+0x2E2B5F, //(Indigo)
+0x0000FF, //(Blue)
+0x0045FF,
+0x007FFF, //(Azure)
+0x00FFFF, //(Cyan)
+0x00FF7F, //(Spring Green)
+0x00FF45,
+0x00FF00, //(Lime)
+0x30FF00,
+0x7FFF00,
+0xFFFF00, //(Yellow)
+0xFFA500, //(Orange)
+0xFF4500, //(Orange Red)
+0xFF0000  //(Red)
+};
+
+// call PL9823Presetinit to set these
+uint8_t COLORS_FOR_DMA[16][24];
+
+// preallocate an array for DMA
+// 24 * NUMLED + reset_cyle*2
+uint8_t LEDbuffer[24*NUMLED + RESET_CYCLE*2];
+uint8_t LEDbuffer2[24*NUMLED + RESET_CYCLE*2];
+
+
+void PL9823_Presetinit(void){ //allocates for each color. force everything to go 50% brightness
+	
+	if (BRIGHTNESS){
+		for (int j = 0; j < 16; j++){ //for each 24 sized array
+			for (int i = 23; i>=0; i--){
+				if (COLORS[j]&((0x800000)>>i)){
+					COLORS_FOR_DMA[j][i] = HIGHTIME;
+				}else{
+					COLORS_FOR_DMA[j][i] = LOWTIME;
+				} 
+			}
+		}		
+	}else{
+		for (int j = 0; j < 16; j++){ //for each 24 sized array
+			uint32_t colors_50 = ((COLORS[j]&(0xfe0000))>>1)|((COLORS[j]&(0x00fe00))>>1)|((COLORS[j]&(0x0000fe))>>1);
+			for (int i = 23; i>=0; i--){
+				if (colors_50&((0x800000)>>i)){
+					COLORS_FOR_DMA[j][i] = HIGHTIME;
+				}else{
+					COLORS_FOR_DMA[j][i] = LOWTIME;
+				} 
+			}
+		}
+	}
+}
+
+
+// takes in a array for a specific channel
+void PL9823_sendchannelPreset(uint8_t *color, uint16_t color_length, uint8_t channel){ 
+	switch(channel){
+		case 1 : // the other channel still seems to update even with me putting breaks. 
+			for (int j=0; j< color_length/2 ; j++){ //for each LED
+				// color should have size color_length/2. each byte consists of two LED data 
+				// first LED, 24*2, 2 is cuz uint16_t
+				memcpy(LEDbuffer+RESET_CYCLE+2*j*24, COLORS_FOR_DMA + ((color[j]) >> 4), 24 );
+				// second LED
+				memcpy(LEDbuffer+RESET_CYCLE+(2*j+1)*24, COLORS_FOR_DMA + ((color[j]) & 0xf), 24 );
+			}
+			HAL_TIM_PWM_Start_DMA(&CHANNEL_1_TIM, CHANNEL_1_TIM_CHANNEL, (uint32_t *)LEDbuffer, 24*NUMLED + RESET_CYCLE*2);
+			break;
+		case 2 :	
+			for (int j=0; j< color_length/2 ; j++){ //for each LED
+				// color should have size color_length/2. each byte consists of two LED data 
+				// first LED, 24*2, 2 is cuz uint16_t
+				memcpy(LEDbuffer2+RESET_CYCLE+2*j*24, COLORS_FOR_DMA + ((color[j]) >> 4), 24 );
+				// second LED
+				memcpy(LEDbuffer2+RESET_CYCLE+(2*j+1)*24, COLORS_FOR_DMA + ((color[j]) & 0xf), 24 );
+			}
+			HAL_TIM_PWM_Start_DMA(&CHANNEL_2_TIM, CHANNEL_2_TIM_CHANNEL, (uint32_t *)LEDbuffer2, 24*NUMLED + RESET_CYCLE*2);
+			break;
+		case 3 :
+			for (int j=0; j< color_length/2 ; j++){ //for each LED
+				// color should have size color_length/2. each byte consists of two LED data 
+				// first LED, 24*2, 2 is cuz uint16_t
+				memcpy(LEDbuffer+RESET_CYCLE+2*j*24, COLORS_FOR_DMA + ((color[j]) >> 4), 24 );
+				// second LED
+				memcpy(LEDbuffer+RESET_CYCLE+(2*j+1)*24, COLORS_FOR_DMA + ((color[j]) & 0xf), 24 );
+			}
+			HAL_TIM_PWM_Start_DMA(&CHANNEL_3_TIM, CHANNEL_3_TIM_CHANNEL, (uint32_t *)LEDbuffer, 24*NUMLED + RESET_CYCLE*2);
+			break;
+		case 4 :
+			for (int j=0; j< color_length/2 ; j++){ //for each LED
+				// color should have size color_length/2. each byte consists of two LED data 
+				// first LED, 24*2, 2 is cuz uint16_t
+				memcpy(LEDbuffer2+RESET_CYCLE+2*j*24, COLORS_FOR_DMA + ((color[j]) >> 4), 24 );
+				// second LED
+				memcpy(LEDbuffer2+RESET_CYCLE+(2*j+1)*24, COLORS_FOR_DMA + ((color[j]) & 0xf), 24 );
+			}
+			HAL_TIM_PWM_Start_DMA(&CHANNEL_4_TIM, CHANNEL_4_TIM_CHANNEL, (uint32_t *)LEDbuffer2, 24*NUMLED + RESET_CYCLE*2);
+			break;
+	}
+}
+
+
+
+
+

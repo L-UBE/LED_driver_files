@@ -8,8 +8,11 @@
 #include "PL9823_v2.h"
 #include <string.h>
 #include <stdio.h>
+//16x16x16
+#define NUMLED 256
+//8x8x8
+// #define NUMLED 64
 
-#define NUMLED 64
 #define RESET_CYCLE 27
 #define HIGHTIME 100
 #define LOWTIME 27
@@ -17,15 +20,17 @@
 #define CHANNEL_1_TIM htim1
 #define CHANNEL_1_TIM_CHANNEL TIM_CHANNEL_1
 #define CHANNEL_2_TIM htim1
-#define CHANNEL_2_TIM_CHANNEL TIM_CHANNEL_4
+#define CHANNEL_2_TIM_CHANNEL TIM_CHANNEL_2
 #define CHANNEL_3_TIM htim1
-#define CHANNEL_3_TIM_CHANNEL TIM_CHANNEL_2
+#define CHANNEL_3_TIM_CHANNEL TIM_CHANNEL_3
 #define CHANNEL_4_TIM htim1
-#define CHANNEL_4_TIM_CHANNEL TIM_CHANNEL_3
+#define CHANNEL_4_TIM_CHANNEL TIM_CHANNEL_4
 
 // PRESET COLORS, 16
+// 0x8A2BE2, // blue violet (last one)
 /*
 uint32_t COLORS[16] = {
+			0x000000,
 			0xFF0000, // red
 			0xFF7F00, // orange
 			0xFFFF00, // yellow
@@ -41,26 +46,32 @@ uint32_t COLORS[16] = {
 			0xD8BFD8, // thistle
 			0xBA55D3, // medium orchid
 			0x9932CC, // dark orchid
-			0x8A2BE2, // blue violet
 };
 */
 uint32_t COLORS[16] = {
-	0xFF0000,
-	0xFF7F00,
-	0xFFFF00,
-	0x00FF00,
-	0x00FFFF,
-	0x0000FF,
-	0x4B0082,
-	0xE6E6FA,
-	0xFF0000,
-	0xFF7F00,
-	0xFFFF00,
-	0x00FF00,
-	0x00FFFF,
-	0x0000FF,
-	0x4B0082,
-	0xE6E6FA};
+		0x000000, // red
+		0xdd5d00, // orange
+		0xdddd00, // yellow
+		0x00dd00, // green
+		0x00dddd, // cyan
+		0x0000dd, // blue
+		0x290060, // indigo
+		0x7200b1, // violet
+		0x7200b1, // violet
+		0x290060, // indigo
+		0x0000dd, // blue
+		0x00dddd, // cyan
+		0x00dd00, // green
+		0xdddd00, // yellow
+		0xdd5d00, // orange
+		0xdd0000 // red
+};
+
+
+
+
+
+
 
 // call PL9823Presetinit to set these
 uint16_t COLORS_FOR_DMA[16][24];
@@ -68,6 +79,7 @@ uint16_t COLORS_FOR_DMA[16][24];
 // preallocate an array for DMA
 // 24 * NUMLED + reset_cyle*2
 uint16_t LEDbuffer[24*NUMLED + RESET_CYCLE*2];
+
 
 void PL9823_Presetinit(void){
 	for (int j = 0; j < 16; j++){ //for each 24 sized array
@@ -112,7 +124,7 @@ void PL9823_sendchannel(uint32_t *color, uint32_t color_length, int channel){
 
 
 // takes in a array for a specific channel
-void PL9823_sendchannelPreset(uint8_t *color, uint8_t color_length, uint8_t channel){ 
+void PL9823_sendchannelPreset(uint8_t *color, uint16_t color_length, uint8_t channel){ 
 	// RESET_CYCLE, set to 0
 	for (int j=0; j< color_length/2 ; j++){ //for each LED
 		// color should have size color_length/2. each byte consists of two LED data 
