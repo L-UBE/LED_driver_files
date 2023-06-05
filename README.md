@@ -1,7 +1,7 @@
 # LED_driver_files
 
 
-Main stuff to care about. 
+Main stuff to care about:
 
 ioc file: lines out a lot of changes from the original PCB design. turned off a lot of pins and made them GND for twisted pair wirings. 
 
@@ -21,6 +21,3 @@ This function will take in a byte array, with each byte containing color values 
 
 PL9823_v3.h: the third version of the LED driver. Delay was significantly reduced, and parallel sending is available. Speed is increased by 2x. 
 - Implemented brightness control for colors. 
-
-
-Pl9823_v4.h: the forth version of the LED driver. Still testing. Not sure if will work.
