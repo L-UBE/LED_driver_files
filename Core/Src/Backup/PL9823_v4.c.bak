@@ -8,7 +8,7 @@ PL9823_v3.h 16x16x16 only
 #include "usart.h"
 #include "gpio.h"
 
-#include "PL9823_v3.h"
+#include "PL9823_v4.h"
 #include <string.h>
 #include <stdio.h>
 //16x16x16
@@ -20,52 +20,32 @@ PL9823_v3.h 16x16x16 only
 #define LOWTIME 27
 
 #define CHANNEL_1_TIM htim1
-#define CHANNEL_1_TIM_CHANNEL TIM_CHANNEL_3
+#define CHANNEL_1_TIM_CHANNEL TIM_CHANNEL_1
 #define CHANNEL_2_TIM htim1
-#define CHANNEL_2_TIM_CHANNEL TIM_CHANNEL_4
+#define CHANNEL_2_TIM_CHANNEL TIM_CHANNEL_2
 #define CHANNEL_3_TIM htim1
-#define CHANNEL_3_TIM_CHANNEL TIM_CHANNEL_2
+#define CHANNEL_3_TIM_CHANNEL TIM_CHANNEL_3
 #define CHANNEL_4_TIM htim1
-#define CHANNEL_4_TIM_CHANNEL TIM_CHANNEL_1
-
-//uint32_t COLORS[16] = {
-//0x000000,
-//0x8B00FF, //(Blue Violet)
-//0x2E2B5F, //(Indigo)
-//0x0000FF, //(Blue)
-//0x0045FF,
-//0x007FFF, //(Azure)
-//0x00FFFF, //(Cyan)
-//0x00FF7F, //(Spring Green)
-//0x00FF45,
-//0x00FF00, //(Lime)
-//0x30FF00,
-//0x7FFF00,
-//0xFFFF00, //(Yellow)
-//0xFFA500, //(Orange)
-//0xFF4500, //(Orange Red)
-//0xFF0000  //(Red)
-//};
+#define CHANNEL_4_TIM_CHANNEL TIM_CHANNEL_4
 
 uint32_t COLORS[16] = {
-	0x000000,
-	0xff007f,
-	0xff00ff,
-	0x7f00ff,
-	0x5a00ff,
-	0x0000ff,
-	0x00acff,
-	0x00ffff,
-	0x00ff00,
-	0x99ff00,
-	0xdaff00,
-	0xffff00,
-	0xffbf00,
-	0xff7F00,
-	0xff5700,
-	0xff0000
+0x000000,
+0x8B00FF, //(Blue Violet)
+0x2E2B5F, //(Indigo)
+0x0000FF, //(Blue)
+0x0045FF,
+0x007FFF, //(Azure)
+0x00FFFF, //(Cyan)
+0x00FF7F, //(Spring Green)
+0x00FF45,
+0x00FF00, //(Lime)
+0x30FF00,
+0x7FFF00,
+0xFFFF00, //(Yellow)
+0xFFA500, //(Orange)
+0xFF4500, //(Orange Red)
+0xFF0000  //(Red)
 };
-
 
 // call PL9823Presetinit to set these
 uint16_t COLORS_FOR_DMA[16][24];
@@ -102,30 +82,6 @@ void PL9823_Presetinit(void){ //allocates for each color. force everything to go
 	}
 }
 
-
-
-
-// set brightness. brightness from 0 to 100; 
-void PL9823_SetBrightness(uint8_t brightness){ 
-	for (int j = 0; j < 16; j++){ //for each 24 sized array
-		uint32_t r = ((COLORS[j]&(0xff0000))*brightness/100) &(0xff0000);
-		uint32_t g = ((COLORS[j]&(0x00ff00))*brightness/100) &(0x00ff00);
-		uint32_t b = ((COLORS[j]&(0x0000ff))*brightness/100) &(0x0000ff);
-		uint32_t colors_new = r|g|b;
-		for (int i = 23; i>=0; i--){
-			if (colors_new&((0x800000)>>i)){
-				COLORS_FOR_DMA[j][i] = HIGHTIME;
-			}else{
-				COLORS_FOR_DMA[j][i] = LOWTIME;
-			} 
-		}
-	}
-	
-};
-
-void PL9823_SetColor(uint32_t color, uint8_t idx){
-	COLORS[idx] = color&(0xffffff);
-};
 
 // takes in a array for a specific channel
 void PL9823_sendchannelPreset(uint8_t *color, uint16_t color_length, uint8_t channel){ 

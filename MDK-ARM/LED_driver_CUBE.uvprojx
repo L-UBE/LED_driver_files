@@ -399,9 +399,9 @@
               <FilePath>..\Core\Src\PL9823.c</FilePath>
             </File>
             <File>
-              <FileName>PL9823_v2.c</FileName>
+              <FileName>PL9823_v3.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Core\Src\PL9823_v2.c</FilePath>
+              <FilePath>..\Core\Src\PL9823_v3.c</FilePath>
             </File>
             <File>
               <FileName>main.c</FileName>

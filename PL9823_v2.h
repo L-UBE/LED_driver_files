@@ -1,5 +1,5 @@
-#ifndef PL9823_V3_H
-#define PL9823_V3_H
+#ifndef PL9823_V2_H
+#define PL9823_V2_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -10,13 +10,11 @@ extern "C" {
 
 void PL9823_Presetinit(void);
 
-void PL9823_SetBrightness(uint8_t brightness);
-
-void PL9823_SetColor(uint32_t color, uint8_t idx);
+void PL9823_sendchannel(uint32_t *color, uint32_t color_length, int channel);
 
 void PL9823_sendchannelPreset(uint8_t *color, uint16_t color_length, uint8_t channel);
 
 #ifdef __cplusplus
 }
 #endif
-#endif /* PL9823_V3_H */
+#endif /* PL9823_V2_H */

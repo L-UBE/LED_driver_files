@@ -43,4 +43,4 @@ led_driver_cube\main.o: ../Core/Inc/tim.h
 led_driver_cube\main.o: ../Core/Inc/usart.h
 led_driver_cube\main.o: ../Core/Inc/gpio.h
 led_driver_cube\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
-led_driver_cube\main.o: ../Core/Inc/PL9823_v2.h
+led_driver_cube\main.o: ../Core/Inc/PL9823_v3.h
