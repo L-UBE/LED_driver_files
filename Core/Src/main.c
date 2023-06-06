@@ -13,6 +13,8 @@
   * in the root directory of this software component.
   * If no LICENSE file comes with this software, it is provided AS-IS.
   *
+  * Designed by Eric Hsieh
+  * Last updated on June 5th 2023
   ******************************************************************************
   */
 /* USER CODE END Header */
